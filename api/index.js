@@ -28,80 +28,101 @@ app.get("/ping", (req, res) => {
   res.send("pong");
 });
 
+
 // requireAuth middleware will validate the access token sent by the client and will return the user information within req.auth
-app.get("/todos", requireAuth, async (req, res) => {
-  const auth0Id = req.auth.payload.sub;
-
-  const user = await prisma.user.findUnique({
-    where: {
-      auth0Id,
-    },
-  });
-
-  const todos = await prisma.todoItem.findMany({
-    where: {
-      userId: user.id,
-    },
-  });
-
-  res.json(todos);
-});
-
-// creates a todo item
-app.post("/todos", requireAuth, async (req, res) => {
-  const auth0Id = req.auth.payload.sub;
-
-  const { title } = req.body;
-
-  if (!title) {
-    res.status(400).send("title is required");
-  } else {
-    const newItem = await prisma.todoItem.create({
-      data: {
-        title,
-        user: { connect: { auth0Id } },
-      },
-    });
-
-    res.status(201).json(newItem);
+app.post("/candidates", requireAuth, async (req, res) => {
+  const { name } = req.body;
+  if (!name) {
+    return res.status(400).send("Candidate name is required.");
   }
-});
 
-// deletes a todo item by id
-app.delete("/todos/:id", requireAuth, async (req, res) => {
-  const id = req.params.id;
-  const deletedItem = await prisma.todoItem.delete({
-    where: {
-      id,
-    },
-  });
-  res.json(deletedItem);
-});
-
-// get a todo item by id
-app.get("/todos/:id", requireAuth, async (req, res) => {
-  const id = req.params.id;
-  const todoItem = await prisma.todoItem.findUnique({
-    where: {
-      id,
-    },
-  });
-  res.json(todoItem);
-});
-
-// updates a todo item by id
-app.put("/todos/:id", requireAuth, async (req, res) => {
-  const id = req.params.id;
-  const { title } = req.body;
-  const updatedItem = await prisma.todoItem.update({
-    where: {
-      id,
-    },
+  const newCandidate = await prisma.candidate.create({
     data: {
-      title,
+      name,
     },
   });
-  res.json(updatedItem);
+
+  res.status(201).json(newCandidate);
+});
+
+app.get("/candidates", async (req, res) => {
+  const candidates = await prisma.candidate.findMany();
+  res.json(candidates);
+});
+
+app.get("/candidates/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  const candidate = await prisma.candidate.findUnique({
+    where: { id },
+  });
+
+  if (!candidate) {
+    return res.status(404).send("Candidate not found.");
+  }
+
+  res.json(candidate);
+});
+
+app.put("/candidates/:id", requireAuth, async (req, res) => {
+  const id = parseInt(req.params.id);
+  const { name } = req.body;
+
+  const updatedCandidate = await prisma.candidate.update({
+    where: { id },
+    data: { name },
+  });
+
+  res.json(updatedCandidate);
+});
+
+app.delete("/candidates/:id", requireAuth, async (req, res) => {
+  const id = parseInt(req.params.id);
+  const deletedCandidate = await prisma.candidate.delete({
+    where: { id },
+  });
+
+  res.json(deletedCandidate);
+});
+
+app.post("/votes", requireAuth, async (req, res) => {
+  const { candidateId } = req.body;
+  const auth0Id = req.auth.payload.sub;
+
+  if (!candidateId) {
+    return res.status(400).send("Candidate ID is required to cast a vote.");
+  }
+
+  const newVote = await prisma.vote.create({
+    data: {
+      user: { connect: { auth0Id } },
+      candidate: { connect: { id: candidateId } },
+    },
+  });
+
+  res.status(201).json(newVote);
+});
+
+app.get("/votes", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
+  const votes = await prisma.vote.findMany({
+    where: {
+      user: { auth0Id },
+    },
+    include: {
+      candidate: true,
+    },
+  });
+
+  res.json(votes);
+});
+
+app.delete("/votes/:id", requireAuth, async (req, res) => {
+  const id = parseInt(req.params.id);
+  const deletedVote = await prisma.vote.delete({
+    where: { id },
+  });
+
+  res.json(deletedVote);
 });
 
 // get Profile information of authenticated user
