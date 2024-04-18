@@ -102,7 +102,8 @@ app.post("/votes", requireAuth, async (req, res) => {
   res.status(201).json(newVote);
 });
 
-app.get("/votes", requireAuth, async (req, res) => {
+// get all votes casted by the authenticated user
+app.get("/my-votes", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
   const votes = await prisma.vote.findMany({
     where: {
@@ -115,6 +116,24 @@ app.get("/votes", requireAuth, async (req, res) => {
 
   res.json(votes);
 });
+
+// get all votes casted by all users
+app.get("/votes", async (req, res) => {
+  const votes = await prisma.vote.findMany({
+    select: {
+      candidateId: true,
+      candidate: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    }
+  });
+
+  res.json(votes);
+});
+
 
 app.delete("/votes/:id", requireAuth, async (req, res) => {
   const id = parseInt(req.params.id);
