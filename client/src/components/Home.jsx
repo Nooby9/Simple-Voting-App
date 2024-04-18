@@ -2,6 +2,7 @@ import "../style/home.css";
 
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
+import CandidateList from './CandidateList';
 
 
 export default function Home() {
@@ -11,7 +12,11 @@ export default function Home() {
 
   return (
     <div className="home">
-      <h1>TODOs App</h1>
+      <h1 className="text-3xl font-bold underline">
+        Hello world!
+      </h1>
+      <CandidateList />
+      <h1>Voting App</h1>
       <div>
         {!isAuthenticated ? (
           <button className="btn-primary" onClick={loginWithRedirect}>

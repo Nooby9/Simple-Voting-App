@@ -31,23 +31,74 @@ app.get("/ping", (req, res) => {
 
 // requireAuth middleware will validate the access token sent by the client and will return the user information within req.auth
 app.post("/candidates", requireAuth, async (req, res) => {
-  const { name } = req.body;
+  const { name, typeId, newType } = req.body;
+
   if (!name) {
     return res.status(400).send("Candidate name is required.");
   }
 
-  const newCandidate = await prisma.candidate.create({
-    data: {
-      name,
-    },
-  });
+  try {
+    // If a typeId is provided, link to the existing type
+    if (typeId) {
+      const candidate = await prisma.candidate.create({
+        data: {
+          name,
+          type: { connect: { id: typeId } },
+        },
+      });
+      return res.status(201).json(candidate);
+    }
 
-  res.status(201).json(newCandidate);
+    // If a newType description is provided, create a new type then link it
+    if (newType) {
+      const candidate = await prisma.candidate.create({
+        data: {
+          name,
+          type: {
+            create: { type: newType },
+          },
+        },
+      });
+      return res.status(201).json(candidate);
+    }
+
+    // If neither typeId nor newType is provided, return an error
+    return res.status(400).send("Either an existing type ID or a new type description is required.");
+  } catch (error) {
+    console.error("Failed to create candidate or type:", error);
+    res.status(500).send("Failed to create candidate or type.");
+  }
 });
 
 app.get("/candidates", async (req, res) => {
-  const candidates = await prisma.candidate.findMany();
-  res.json(candidates);
+  try {
+    const candidates = await prisma.candidate.findMany({
+      include: {
+        type: {
+          select: {
+            type: true
+          }
+        },
+        _count: {
+          select: {
+            votes: true
+          }
+        }
+      }
+    });
+
+    const formattedCandidates = candidates.map(candidate => ({
+      id: candidate.id,
+      name: candidate.name,
+      candidateType: candidate.type.type,
+      votesCount: candidate._count.votes
+    }));
+
+    res.json(formattedCandidates);
+  } catch (error) {
+    console.error("Failed to retrieve candidates:", error);
+    res.status(500).send("Internal server error.");
+  }
 });
 
 app.get("/candidates/:id", async (req, res) => {
@@ -92,15 +143,29 @@ app.post("/votes", requireAuth, async (req, res) => {
     return res.status(400).send("Candidate ID is required to cast a vote.");
   }
 
-  const newVote = await prisma.vote.create({
-    data: {
-      user: { connect: { auth0Id } },
-      candidate: { connect: { id: candidateId } },
-    },
-  });
+  try {
+    const candidateExists = await prisma.candidate.findUnique({
+      where: { id: candidateId },
+    });
 
-  res.status(201).json(newVote);
+    if (!candidateExists) {
+      return res.status(404).send("Candidate not found.");
+    }
+
+    const newVote = await prisma.vote.create({
+      data: {
+        user: { connect: { auth0Id } },
+        candidate: { connect: { id: candidateId } },
+      }
+    });
+
+    res.status(201).json(newVote);
+  } catch (error) {
+    console.error("Failed to cast vote:", error);
+    res.status(500).send("Failed to cast vote.");
+  }
 });
+
 
 // get all votes casted by the authenticated user
 app.get("/my-votes", requireAuth, async (req, res) => {

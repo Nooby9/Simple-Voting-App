@@ -15,11 +15,11 @@ datasource db {
 
 
 model User {
-  id           Int      @id @default(autoincrement())
-  email        String   @unique
-  auth0Id      String   @unique @default("")
-  name         String?
-  votes        Vote[]
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  auth0Id   String   @unique @default("")
+  name      String?
+  votes     Vote[]
 }
 
 model Vote {
@@ -29,10 +29,21 @@ model Vote {
   user        User      @relation(fields: [userId], references: [id])
   candidate   Candidate @relation(fields: [candidateId], references: [id])
   createdAt   DateTime  @default(now())
+  
+  @@unique([userId, candidateId]) // Ensure uniqueness per user and candidate
 }
 
 model Candidate {
-  id      Int     @id @default(autoincrement())
-  name    String
-  votes   Vote[]
+  id          Int             @id @default(autoincrement())
+  name        String
+  type        CandidateType   @relation(fields: [typeId], references: [id])
+  typeId      Int
+  votes       Vote[]
 }
+
+model CandidateType {
+  id          Int          @id @default(autoincrement())
+  type        String       @unique
+  candidates  Candidate[]
+}
+
