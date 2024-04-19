@@ -12,9 +12,6 @@ export default function Home() {
 
   return (
     <div className="home">
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
       <CandidateList />
       <h1>Voting App</h1>
       <div>
