@@ -275,6 +275,55 @@ app.get("/votes", async (req, res) => {
   res.json(votes);
 });
 
+app.get("/votes/:id", requireAuth, async (req, res) => {
+  const id = parseInt(req.params.id);
+  const auth0Id = req.auth.payload.sub;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { auth0Id }
+    });
+
+    if (!user) {
+      return res.status(404).send("User not found.");
+    }
+
+    const vote = await prisma.vote.findUnique({
+      where: { id },
+      include: {
+        user: true,
+        candidate: {
+          include: {
+            type: true
+          }
+        }
+      }
+    });
+
+    if (!vote) {
+      return res.status(404).send("Vote not found.");
+    }
+
+    if (vote.userId !== user.id) {
+      return res.status(403).send("You are not authorized to view this vote.");
+    }
+
+    const voteDetails = {
+      voteId: vote.id,
+      userName: vote.user.name,
+      candidateName: vote.candidate.name,
+      candidateType: vote.candidate.type.type,
+      createdAt: vote.createdAt
+    };
+
+    res.json(voteDetails);
+  } catch (error) {
+    console.error("Failed to retrieve vote details:", error);
+    res.status(500).send("Internal server error.");
+  }
+});
+
+
 
 app.delete("/votes/:id", requireAuth, async (req, res) => {
   const id = parseInt(req.params.id);

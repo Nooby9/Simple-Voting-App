@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useCallback  } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate } from 'react-router-dom';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 function MyVotesList() {
   const [rowData, setRowData] = useState([]);
   const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
+  const navigate = useNavigate();
 
   const fetchCandidates = useCallback(async () => {
     const accessToken = await getAccessTokenSilently();
@@ -33,6 +35,7 @@ function MyVotesList() {
   }, [getAccessTokenSilently]);
 
   const unvoteCandidate = useCallback(async (voteId) => {
+    
     try {
       const accessToken = await getAccessTokenSilently();
       const response = await fetch(`${process.env.REACT_APP_API_URL}/votes/${voteId}`, {
@@ -53,6 +56,27 @@ function MyVotesList() {
     }
   }, [getAccessTokenSilently, fetchCandidates]);
 
+  const onRowClicked = useCallback((event) => {
+    navigate(`/app/details/${event.data.id}`); 
+  }, [navigate]);
+
+  const unvoteButtonRenderer = (params) => {
+    const handleClick = (e) => {
+      e.stopPropagation(); 
+      unvoteCandidate(params.value); 
+    };
+  
+    return (
+      <button
+        ref={(ref) => {
+          if (ref) ref.onclick = handleClick;
+        }}
+      >
+        Unvote
+      </button>
+    );
+  };
+
   const columnDefs = [
     { headerName: "Voter Name", field: "userName", sortable: true, filter: true, resizable: false},
     { headerName: "Candidate Name", field: "candidateName", sortable: true, filter: true, resizable: false },
@@ -61,13 +85,21 @@ function MyVotesList() {
     {
       headerName: "Unvote",
       field: "id",
-      cellRenderer: (params) => <button onClick={() => unvoteCandidate(params.value)}>Unvote</button>, 
+      cellRenderer: unvoteButtonRenderer,
+      cellRendererParams: {
+        onClick: (event) => {
+          event.stopPropagation();
+        }
+      },
+      resizable: false
+    },
+    {
+      headerName: "Details",
+      field: "id",
+      cellRenderer: (params) => <button onClick={() => onRowClicked(params)}>Details</button>, 
       resizable: false
     }
   ];
-
-
-  
   
 
   useEffect(() => {
@@ -96,6 +128,7 @@ function MyVotesList() {
         domLayout='autoHeight'
         animateRows={true}
         autoSizeStrategy={autoSizeStrategy}
+        onRowClicked={onRowClicked}
       />
     </div>
   );

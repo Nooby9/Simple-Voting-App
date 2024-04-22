@@ -63,7 +63,7 @@ root.render(
               <Route path="candidates" element={<CandidateList />} />
               <Route path="my-votes" element={<MyVotes />} />
               <Route path="create-candidate" element={<CreateCandidate />} />
-              <Route path="votes/:voteId" element={<VoteDetail />} />
+              <Route path="details/:voteId" element={<VoteDetail />} />
               <Route path="vote" element={<VoteList />} />
               <Route path="debugger" element={<AuthDebugger />} />
             </Route>
