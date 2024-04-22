@@ -2,8 +2,10 @@ import React from "react";
 import * as ReactDOMClient from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./components/AppLayout";
-import Todos from "./components/Todos";
-import TodoDetail from "./components/TodoDetail";
+import MyVotes from "./components/MyVotes";
+import VoteDetail from "./components/VoteDetail";
+import CandidateList from "./components/CandidateList";
+import VoteList from "./components/VoteList";
 import Profile from "./components/Profile";
 import NotFound from "./components/NotFound";
 import Home from "./components/Home";
@@ -57,8 +59,10 @@ root.render(
               }
             >
               <Route index element={<Profile />} />
-              <Route path="todos" element={<Todos />} />
-              <Route path="todos/:todoId" element={<TodoDetail />} />
+              <Route path="candidates" element={<CandidateList />} />
+              <Route path="my-votes" element={<MyVotes />} />
+              <Route path="votes/:voteId" element={<VoteDetail />} />
+              <Route path="vote" element={<VoteList />} />
               <Route path="debugger" element={<AuthDebugger />} />
             </Route>
             <Route path="*" element={<NotFound />} />
