@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback  } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { useAuthToken } from "../AuthTokenContext";
 import { useAuth0 } from "@auth0/auth0-react";
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';

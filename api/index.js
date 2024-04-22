@@ -285,6 +285,39 @@ app.delete("/votes/:id", requireAuth, async (req, res) => {
   res.json(deletedVote);
 });
 
+app.get("/candidate-types", async (req, res) => {
+  try {
+    const types = await prisma.candidateType.findMany();
+    res.json(types);
+  } catch (error) {
+    console.error("Failed to fetch candidate types:", error);
+    res.status(500).send("Failed to fetch candidate types.");
+  }
+});
+
+app.post("/candidate-types", requireAuth, async (req, res) => {
+  const { type } = req.body;
+  if (!type) {
+    return res.status(400).send("Type name is required.");
+  }
+
+  try {
+    const newType = await prisma.candidateType.create({
+      data: { type }
+    });
+    res.status(201).json(newType);
+  } catch (error) {
+    if (error.code === "P2002" && error.meta?.target?.includes('type')) {
+      // This is the specific error code for unique constraint violation in Prisma
+      return res.status(409).send(`A candidate type with the name "${type}" already exists.`);
+    }
+    console.error("Failed to create candidate type:", error);
+    res.status(500).send("Failed to create candidate type.");
+  }
+});
+
+
+
 app.put("/update-user", requireAuth, async (req, res) => {
   const { name } = req.body; 
   if (!name) {

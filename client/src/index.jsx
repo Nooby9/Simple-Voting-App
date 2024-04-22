@@ -15,6 +15,7 @@ import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import { AuthTokenProvider } from "./AuthTokenContext";
 import "./style/normalize.css";
 import "./style/index.css";
+import CreateCandidate from "./components/CreateCandidate";
 
 const container = document.getElementById("root");
 
@@ -61,6 +62,7 @@ root.render(
               <Route index element={<Profile />} />
               <Route path="candidates" element={<CandidateList />} />
               <Route path="my-votes" element={<MyVotes />} />
+              <Route path="create-candidate" element={<CreateCandidate />} />
               <Route path="votes/:voteId" element={<VoteDetail />} />
               <Route path="vote" element={<VoteList />} />
               <Route path="debugger" element={<AuthDebugger />} />

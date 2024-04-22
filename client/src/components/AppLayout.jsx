@@ -25,6 +25,9 @@ export default function AppLayout() {
               <Link to="/app/my-votes">My Votes</Link>
             </li>
             <li>
+              <Link to="/app/create-candidate">Create Candidate</Link>
+            </li>
+            <li>
               <Link to="/app">Profile</Link>
             </li>
             <li>
