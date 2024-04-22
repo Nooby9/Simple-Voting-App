@@ -144,14 +144,58 @@ app.post("/votes", requireAuth, async (req, res) => {
   }
 
   try {
-    const candidateExists = await prisma.candidate.findUnique({
-      where: { id: candidateId },
+
+    // Check if the user exists
+    const user = await prisma.user.findUnique({
+      where: { auth0Id }
     });
 
-    if (!candidateExists) {
+    if (!user) {
+      return res.status(404).send("User not found.");
+    }
+
+    // Check if the candidate exists and fetch its type
+    const candidate = await prisma.candidate.findUnique({
+      where: { id: candidateId },
+      include: {
+        type: true 
+      }
+    });
+
+    if (!candidate) {
       return res.status(404).send("Candidate not found.");
     }
 
+    // Check if the user has already voted for this candidate
+    const existingVoteForCandidate = await prisma.vote.findFirst({
+      where: {
+        userId: user.id,
+        candidateId: candidateId,
+      },
+    });
+
+    if (existingVoteForCandidate) {
+      return res.status(409).send("You have already voted for this candidate.");
+    }
+
+    // Check if the user has already voted for any candidate of the same type
+    const existingVoteForType = await prisma.vote.findFirst({
+      where: {
+        userId: user.id,
+        candidate: {
+          typeId: candidate.typeId  
+        }
+      },
+      include: {
+        candidate: true  
+      }
+    });
+
+    if (existingVoteForType) {
+      return res.status(409).send(`You have already voted for a candidate of this type: ${candidate.type.type}.`);
+    }
+
+   
     const newVote = await prisma.vote.create({
       data: {
         user: { connect: { auth0Id } },
@@ -167,19 +211,51 @@ app.post("/votes", requireAuth, async (req, res) => {
 });
 
 
+
 // get all votes casted by the authenticated user
 app.get("/my-votes", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
+
+  // Retrieve the votes cast by the current user
   const votes = await prisma.vote.findMany({
     where: {
       user: { auth0Id },
     },
     include: {
-      candidate: true,
+      user: {
+        select: {
+          name: true
+        }
+      },
+      candidate: {
+        select: {
+          name: true,
+          votes: {
+            select: {
+              id: true
+            }
+          },
+          type: {
+            select: {
+              type: true
+            }
+          }
+        }
+        
+      }
     },
   });
 
-  res.json(votes);
+  // Transform the data to include candidate names and the number of votes
+  const results = votes.map(vote => ({
+    id: vote.id,
+    userName: vote.user.name,
+    candidateName: vote.candidate.name,
+    candidateType: vote.candidate.type.type,
+    votesCount: vote.candidate.votes.length
+  }));
+
+  res.json(results);
 });
 
 // get all votes casted by all users
@@ -207,6 +283,35 @@ app.delete("/votes/:id", requireAuth, async (req, res) => {
   });
 
   res.json(deletedVote);
+});
+
+app.put("/update-user", requireAuth, async (req, res) => {
+  const { name } = req.body; 
+  if (!name) {
+    return res.status(400).send("Name is required.");
+  }
+
+  const auth0Id = req.auth.payload.sub;  
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: {
+        auth0Id: auth0Id  
+      },
+      data: {
+        name: name  
+      }
+    });
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error("Failed to update user:", error);
+    if (error.code === 'P2025') {
+      res.status(404).send("User not found.");  
+    } else {
+      res.status(500).send("Unable to update user.");
+    }
+  }
 });
 
 // get Profile information of authenticated user

@@ -19,10 +19,13 @@ export default function AppLayout() {
         <nav className="menu">
           <ul className="menu-list">
             <li>
-              <Link to="/app">Profile</Link>
+              <Link to="/app/vote">Vote</Link>
             </li>
             <li>
-              <Link to="/app/todos">TODOs</Link>
+              <Link to="/app/my-votes">My Votes</Link>
+            </li>
+            <li>
+              <Link to="/app">Profile</Link>
             </li>
             <li>
               <Link to="/app/debugger">Auth Debugger</Link>
