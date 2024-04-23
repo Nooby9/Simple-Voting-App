@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth0 } from "@auth0/auth0-react";
+import '../style/voteDetail.css';
 
 export default function VoteDetail() {
     let { voteId } = useParams();
@@ -59,22 +60,30 @@ export default function VoteDetail() {
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
+    const handleArticleClick = (url) => {
+      window.open(url, '_blank');
+    };
+
     return (
-        <div>
-            <h1>Vote Details</h1>
-            <p>Details for vote ID: {voteId}</p>
-            <p><strong>Voter Name:</strong> {voteDetails.userName}</p>
-            <p><strong>Candidate Name:</strong> {voteDetails.candidateName}</p>
-            <p><strong>Candidate Type:</strong> {voteDetails.candidateType}</p>
-            <p><strong>Date Cast:</strong> {new Date(voteDetails.createdAt).toLocaleString()}</p>
-            {newsData.length ? newsData.map((article, index) => (
-            <div key={index}>
-              <h3>{article.thread.title}</h3>
-              <p>{new Date(article.published).toLocaleDateString()} by {article.author || 'Unknown'}</p>
-              <a href={article.thread.url} target="_blank" rel="noopener noreferrer">Read more</a>
+      <div className="container">
+            <div className="header">
+                <h1>Vote Details for vote ID: {voteId}</h1>
             </div>
-            )) : <p>No related news articles found.</p>}
-            <button onClick={goBack}>Back to My Votes</button>
+            <div className="details">
+                <p><strong>Voter Name:</strong> {voteDetails.userName}</p>
+                <p><strong>Candidate Name:</strong> {voteDetails.candidateName}</p>
+                <p><strong>Candidate Type:</strong> {voteDetails.candidateType}</p>
+                <p><strong>Date Cast:</strong> {new Date(voteDetails.createdAt).toLocaleString()}</p>
+            </div>
+            <div className="news-container">
+                {newsData.length ? newsData.map((article, index) => (
+                <div key={index} className="news-article" onClick={() => handleArticleClick(article.thread.url)} style={{cursor: 'pointer'}}>
+                    <h3>{article.thread.title}</h3>
+                    <p>{new Date(article.published).toLocaleDateString()} by {article.author || 'Unknown'}</p>
+                </div>
+                )) : <p>No related news articles found.</p>}
+            </div>
+            <button className="return-to-myvotes-button" onClick={goBack}>Back to My Votes</button>
         </div>
     );
 }
