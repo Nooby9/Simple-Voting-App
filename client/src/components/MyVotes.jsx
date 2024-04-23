@@ -4,11 +4,25 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from 'react-router-dom';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+import "../style/voteList.css";
+import "../style/myVotes.css";
 
 function MyVotesList() {
   const [rowData, setRowData] = useState([]);
+  const [isSmallView, setIsSmallView] = useState(window.innerWidth < 768);
   const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallView(window.innerWidth < 768);
+    };
+  
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const fetchCandidates = useCallback(async () => {
     const accessToken = await getAccessTokenSilently();
@@ -67,7 +81,7 @@ function MyVotesList() {
     };
   
     return (
-      <button
+      <button className="unvote-button"
         ref={(ref) => {
           if (ref) ref.onclick = handleClick;
         }}
@@ -78,10 +92,10 @@ function MyVotesList() {
   };
 
   const columnDefs = [
-    { headerName: "Voter Name", field: "userName", sortable: true, filter: true, resizable: false},
-    { headerName: "Candidate Name", field: "candidateName", sortable: true, filter: true, resizable: false },
-    { headerName: "Candidate Type", field: "candidateType", sortable: true, filter: true, resizable: false },
-    { headerName: "Candidate Total Votes", field: "votesCount", sortable: true, filter: true, resizable: false},
+    { headerName: "Voter", field: "userName", sortable: true, filter: true},
+    { headerName: "Candidate", field: "candidateName", sortable: true, filter: true},
+    { headerName: "Type", field: "candidateType", sortable: true, filter: true},
+    { headerName: "Count", field: "votesCount", sortable: true, filter: true},
     {
       headerName: "Unvote",
       field: "id",
@@ -90,14 +104,12 @@ function MyVotesList() {
         onClick: (event) => {
           event.stopPropagation();
         }
-      },
-      resizable: false
+      }
     },
     {
       headerName: "Details",
       field: "id",
-      cellRenderer: (params) => <button onClick={() => onRowClicked(params)}>Details</button>, 
-      resizable: false
+      cellRenderer: (params) => <button className="details-button" onClick={() => onRowClicked(params)}>Details</button>
     }
   ];
   
@@ -116,20 +128,21 @@ function MyVotesList() {
     fetchCandidates();
   }, [isLoading, isAuthenticated]); 
 
-  const autoSizeStrategy = {
-    type: 'fitGridWidth'
-  };
+  const autoSizeStrategy = isSmallView ? null : { type: 'fitGridWidth' };
 
   return (
-    <div className="ag-theme-alpine" style={{ height: 400, width: '60%' }}>
-      <AgGridReact
-        columnDefs={columnDefs}
-        rowData={rowData}
-        domLayout='autoHeight'
-        animateRows={true}
-        autoSizeStrategy={autoSizeStrategy}
-        onRowClicked={onRowClicked}
-      />
+    <div className="vote-list">
+      <h2>My Votes</h2>
+      <div className="ag-theme-alpine">
+        <AgGridReact
+          columnDefs={columnDefs}
+          rowData={rowData}
+          domLayout='autoHeight'
+          animateRows={true}
+          autoSizeStrategy={autoSizeStrategy}
+          onRowClicked={onRowClicked}
+        />
+      </div>
     </div>
   );
 }

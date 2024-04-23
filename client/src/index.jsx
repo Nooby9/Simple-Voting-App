@@ -15,6 +15,7 @@ import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import { AuthTokenProvider } from "./AuthTokenContext";
 import "./style/normalize.css";
 import "./style/index.css";
+import "."
 import CreateCandidate from "./components/CreateCandidate";
 
 const container = document.getElementById("root");

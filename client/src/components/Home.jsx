@@ -3,6 +3,7 @@ import "../style/home.css";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import CandidateList from './CandidateList';
+import MyVotesList from "./MyVotes";
 
 
 export default function Home() {
@@ -12,8 +13,14 @@ export default function Home() {
 
   return (
     <div className="home">
+      <h1>Simple Voting App</h1>
       <CandidateList />
-      <h1>Voting App</h1>
+      
+      
+      {isAuthenticated && <MyVotesList />}
+
+      
+      <h2>Login to Vote!</h2>
       <div>
         {!isAuthenticated ? (
           <button className="btn-primary" onClick={loginWithRedirect}>
@@ -26,6 +33,7 @@ export default function Home() {
         )}
       </div>
       <div>
+        
         <button className="btn-secondary" onClick={signUp}>
           Create Account
         </button>

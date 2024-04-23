@@ -1,0 +1,62 @@
+.unvote-button, .details-button {
+    background-color: #e63946; 
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+    font-weight: bold; 
+  }
+  
+  
+  .unvote-button:hover, .details-button:hover {
+    background-color: #f1faee; 
+    color: #e63946; 
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); 
+  }
+  
+  
+  .unvote-button:active, .details-button:active {
+    transform: translateY(1px); 
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); 
+  }
+
+.details-button {
+    background-color: #3791f1; 
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+    font-weight: bold; 
+  }
+  
+  
+.details-button:hover {
+    background-color: #f1faee; 
+    color: #3791f1; 
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); 
+  }
+  
+  
+.details-button:active {
+    transform: translateY(1px); 
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); 
+  }
+  
+  
+  @media (max-width: 768px) {
+    .unvote-button, .details-button {
+      padding: 6px 12px; 
+      font-size: 14px; 
+    }
+  }
+  

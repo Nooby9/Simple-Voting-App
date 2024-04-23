@@ -3,12 +3,31 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  
+}
+
+.btn-primary, .btn-secondary {
+  padding: 10px 20px;  
+  border: none;        
+  cursor: pointer;     
+  transition: all 0.3s ease;  
+  outline: none;   
+  border-radius: 5px;    
 }
 
 .btn-primary {
-  background-color: coral;
+  background-color: rgb(127, 217, 85);
   color: whitesmoke;
+}
+
+.btn-primary:hover {
+  background-color: #3db754;  
+  transform: scale(1.05);    
+}
+
+.btn-primary:active {
+  transform: scale(0.95);     
+  box-shadow: 0 2px #666;     
 }
 
 .btn-secondary {
@@ -16,3 +35,14 @@
   background-color: cornflowerblue;
   color: whitesmoke;
 }
+
+.btn-secondary:hover {
+  background-color: #6cace4;  
+  transform: scale(1.05);     
+}
+
+.btn-secondary:active {
+  transform: scale(0.95);     
+  box-shadow: 0 2px #666;     
+}
+

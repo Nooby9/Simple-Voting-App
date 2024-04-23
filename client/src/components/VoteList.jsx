@@ -3,6 +3,7 @@ import { AgGridReact } from 'ag-grid-react';
 import { useAuth0 } from "@auth0/auth0-react";
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+import "../style/voteList.css";
 
 function VoteList() {
   const [rowData, setRowData] = useState([]);
@@ -49,13 +50,13 @@ function VoteList() {
   }, [fetchCandidates, getAccessTokenSilently]);
 
   const [columnDefs] = useState([
-    { headerName: "Name", field: "name", sortable: true, filter: true, resizable: false },
-    { headerName: "Type", field: "candidateType", sortable: true, filter: true, resizable: false },
-    { headerName: "Votes", field: "votesCount", sortable: true, filter: true, resizable: false },
+    { headerName: "Name", field: "name", sortable: true, filter: true },
+    { headerName: "Type", field: "candidateType", sortable: true, filter: true },
+    { headerName: "Votes", field: "votesCount", sortable: true, filter: true },
     {
       headerName: "Vote",
       field: "id",
-      cellRenderer: (params) => <button onClick={() => voteCandidate(params.value)}>Vote</button>, 
+      cellRenderer: (params) => <button className="vote-button" onClick={() => voteCandidate(params.value)}>Vote</button>, 
       resizable: false
     }
   ]);
@@ -69,14 +70,17 @@ function VoteList() {
   };
 
   return (
-    <div className="ag-theme-alpine" style={{ height: 400, width: '60%' }}>
-      <AgGridReact
-        columnDefs={columnDefs}
-        rowData={rowData}
-        domLayout='autoHeight'
-        animateRows={true}
-        autoSizeStrategy={autoSizeStrategy}
-      />
+    <div className="vote-list">
+      <h2>Voting List</h2>
+      <div className="ag-theme-alpine">
+        <AgGridReact
+          columnDefs={columnDefs}
+          rowData={rowData}
+          domLayout='autoHeight'
+          animateRows={true}
+          autoSizeStrategy={autoSizeStrategy}
+        />
+      </div>
     </div>
   );
 }

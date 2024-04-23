@@ -11,9 +11,9 @@ function CandidateList() {
   //`${process.env.REACT_APP_API_URL}/candidates`
 
   const [columnDefs] = useState([
-    { headerName: "Name", field: "name", sortable: true, filter: true, resizable: false },
-    { headerName: "Type", field: "candidateType", sortable: true, filter: true, resizable: false},
-    { headerName: "Votes", field: "votesCount", sortable: true, filter: true, resizable: false}
+    { headerName: "Name", field: "name", sortable: true, filter: true},
+    { headerName: "Type", field: "candidateType", sortable: true, filter: true},
+    { headerName: "Votes", field: "votesCount", sortable: true, filter: true}
   ]);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ function CandidateList() {
   };
 
   return (
-    <div className="ag-theme-alpine" style={{ height: 400, width: '60%' }}>
+    <div className="ag-theme-alpine" style={{ width: '60%' }}>
         <AgGridReact
             columnDefs={columnDefs}
             rowData={rowData}
