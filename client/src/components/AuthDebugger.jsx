@@ -16,7 +16,7 @@ export default function AuthDebugger() {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <div style={{ marginBottom: '20px' }}>
+      <div className='auth-token' style={{ marginBottom: '20px' }}>
         <button onClick={() => setShowToken(!showToken)}>
           {showToken ? 'Hide' : 'Show'} Auth Token
         </button>
@@ -24,7 +24,7 @@ export default function AuthDebugger() {
           Copy Auth Token
         </button>
         {showToken && (
-          <pre style={{ whiteSpace: 'pre-wrap', background: '#f4f4f8', padding: '10px', borderRadius: '5px', marginTop: '10px' }}>
+          <pre style={{ whiteSpace: 'pre-wrap', overflowX: 'auto', background: '#f4f4f8', padding: '10px', borderRadius: '5px', marginTop: '10px' }}>
             {JSON.stringify(accessToken, null, 2)}
           </pre>
         )}

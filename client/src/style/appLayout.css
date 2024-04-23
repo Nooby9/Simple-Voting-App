@@ -151,6 +151,7 @@ body {
   .header.isMenuVisible .menu {
     display: block; 
   }
+
 }
 @media (min-width: 769px) {
   .menu {
