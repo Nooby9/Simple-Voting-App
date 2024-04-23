@@ -68,12 +68,12 @@ body {
   text-decoration: none;
   color: #ffffff;
   font-weight: bold;
-  display: flex; /* Makes each link a flex container */
-  align-items: center; /* Centers content of links vertically */
-  height: 100%; /* Ensures full height for vertical alignment */
-  border: none; /* Removes border for links, if any */
-  background: none; /* Ensures no background for links */
-  cursor: pointer; /* Pointer cursor for all clickable items */
+  display: flex; 
+  align-items: center; 
+  height: 100%; 
+  border: none; 
+  background: none; 
+  cursor: pointer; 
 }
 
 .menu-list a:hover {
