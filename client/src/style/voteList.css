@@ -17,7 +17,7 @@ h2 {
   border-radius: 8px; 
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
   padding: 20px; 
-  width: 80%;
+  width: 100%;
 }
 
 
@@ -33,7 +33,7 @@ h2 {
 }
 
 .vote-button {
-  background-color: #e63946; 
+  background-color: #4CAF50; 
   color: white;
   border: none;
   border-radius: 5px;
@@ -43,9 +43,10 @@ h2 {
 }
 
 .vote-button:hover  {
-  background-color: #75e650; 
-  color: #000000; 
+  background-color: white; 
+  color: #4CAF50; 
   transform: translateY(-2px); 
+  border: 1px solid #4CAF50;
 }
 
 .vote-button:active {

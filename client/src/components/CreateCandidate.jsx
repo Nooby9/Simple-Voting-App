@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
+import '../style/createCandidate.css';
 
 function CreateCandidate() {
   const [candidateName, setCandidateName] = useState('');
@@ -75,12 +76,13 @@ function CreateCandidate() {
 
   return (
     <form onSubmit={handleSubmit}>
+      <h2>Create a New Candidate</h2>
       <label>
         Candidate Name:
         <input type="text" value={candidateName} onChange={(e) => setCandidateName(e.target.value)} required />
       </label>
       <label>
-        Choose a Candidate Type:
+        Choose a Candidate Type: (Choose "None" if you want to define a new type)
         <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
           <option value="none">None</option>
           {candidateTypes.map((type) => (

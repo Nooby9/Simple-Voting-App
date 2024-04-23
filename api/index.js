@@ -258,6 +258,29 @@ app.get("/my-votes", requireAuth, async (req, res) => {
   res.json(results);
 });
 
+app.get("/my-votes/count", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { auth0Id }
+    });
+
+    if (!user) {
+      return res.status(404).send("User not found.");
+    }
+
+    const votesCount = await prisma.vote.count({
+      where: { userId: user.id }
+    });
+
+    res.json({ totalVotes: votesCount });
+  } catch (error) {
+    console.error("Failed to retrieve vote count:", error);
+    res.status(500).send("Internal server error.");
+  }
+});
+
+
 // get all votes casted by all users
 app.get("/votes", async (req, res) => {
   const votes = await prisma.vote.findMany({

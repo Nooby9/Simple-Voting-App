@@ -92,7 +92,6 @@ function MyVotesList() {
   };
 
   const columnDefs = [
-    { headerName: "Voter", field: "userName", sortable: true, filter: true},
     { headerName: "Candidate", field: "candidateName", sortable: true, filter: true},
     { headerName: "Type", field: "candidateType", sortable: true, filter: true},
     { headerName: "Count", field: "votesCount", sortable: true, filter: true},
