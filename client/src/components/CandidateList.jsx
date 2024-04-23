@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react'; 
 import 'ag-grid-community/styles/ag-grid.css'; 
 import 'ag-grid-community/styles/ag-theme-alpine.css'; 
+import "../style/candidateList.css";
 
 // Define the CandidateList component
 function CandidateList() {
@@ -39,7 +40,7 @@ function CandidateList() {
   };
 
   return (
-    <div className="ag-theme-alpine" style={{ width: '60%' }}>
+    <div className="ag-theme-alpine">
         <AgGridReact
             columnDefs={columnDefs}
             rowData={rowData}
