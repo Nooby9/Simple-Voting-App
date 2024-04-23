@@ -23,7 +23,7 @@ describe("Home Component Tests", () => {
 
   test("renders without crashing", () => {
     render(<Home />);
-    expect(screen.getByText("TODOs App")).toBeInTheDocument();
+    expect(screen.getByText("Simple Voting App")).toBeInTheDocument();
   });
 
   test("displays Login button when not authenticated", () => {
@@ -63,4 +63,5 @@ describe("Home Component Tests", () => {
       screen_hint: "signup",
     });
   });
+
 });

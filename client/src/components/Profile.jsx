@@ -45,11 +45,8 @@ export default function Profile() {
       setTotalVotes(votesData.totalVotes);  
       setTopVotedCandidates(topCandidatesData);
     } catch (error) {
-      console.error('Error fetching data:', error);
     }
   };
-
-  
 
 
   const updateName = async () => {
