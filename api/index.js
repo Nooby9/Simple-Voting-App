@@ -280,6 +280,67 @@ app.get("/my-votes/count", requireAuth, async (req, res) => {
   }
 });
 
+// Get the top 3 most-voted candidates that the current user has voted for
+app.get("/top-voted-candidates", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
+
+  try {
+    const results = await getTopVotedCandidates(auth0Id);
+    res.json(results);
+  } catch (error) {
+    console.error("Failed to retrieve top voted candidates:", error);
+    res.status(500).send("Internal server error.");
+  }
+});
+
+
+// Helper function to get the top 3 most-voted candidates that the current user has voted for
+async function getTopVotedCandidates(auth0Id) {
+  const user = await prisma.user.findUnique({
+    where: { auth0Id },
+    include: {
+      votes: {
+        include: {
+          candidate: true 
+        }
+      }
+    }
+  });
+
+  if (!user) {
+    throw new Error("User not found.");
+  }
+
+  const candidateIds = user.votes.map(vote => vote.candidateId);
+
+  const topCandidates = await prisma.candidate.findMany({
+    where: {
+      id: {
+        in: candidateIds 
+      }
+    },
+    include: {
+      _count: {
+        select: {
+          votes: true 
+        }
+      }
+    },
+    orderBy: {
+      votes: {
+        _count: 'desc'
+      }
+    },
+    take: 3 
+  });
+
+  return topCandidates.map(candidate => ({
+    id: candidate.id,
+    name: candidate.name,
+    votesCount: candidate._count.votes
+  }));
+}
+
 
 // get all votes casted by all users
 app.get("/votes", async (req, res) => {

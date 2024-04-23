@@ -8,6 +8,7 @@ export default function Profile() {
   const [totalVotes, setTotalVotes] = useState(0);  
   const [editMode, setEditMode] = useState(false);
   const [newName, setNewName] = useState(user.name || '');
+  const [topVotedCandidates, setTopVotedCandidates] = useState([]);
 
   // Fetch user data and total votes
   const fetchData = async () => {
@@ -23,22 +24,32 @@ export default function Profile() {
           headers: {
             'Authorization': `Bearer ${accessToken}`
           }
+        }),
+        fetch(`${process.env.REACT_APP_API_URL}/top-voted-candidates`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
         })
       ]);
 
       const userData = await responses[0].json();
       const votesData = await responses[1].json();
+      const topCandidatesData = await responses[2].json();
 
       if (!responses[0].ok) throw new Error('Failed to fetch user data');
       if (!responses[1].ok) throw new Error('Failed to fetch vote count');
+      if (!responses[2].ok) throw new Error('Failed to fetch top voted candidates');
 
       setUserData(userData);
       setNewName(userData.name);
       setTotalVotes(votesData.totalVotes);  
+      setTopVotedCandidates(topCandidatesData);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
+
+  
 
 
   const updateName = async () => {
@@ -93,6 +104,12 @@ export default function Profile() {
             <p>Name: {userData.name}</p>
             <p>Email: {user.email}</p>
             <p>Total Number of Votes Currently: {totalVotes}</p>
+            <h3>Top Voted Candidates that I also Voted For:</h3>
+            <ul className='top-candidates'>
+              {topVotedCandidates.map(candidate => (
+                <li key={candidate.id}>{candidate.name} - Votes: {candidate.votesCount}</li>
+              ))}
+            </ul>
             <button onClick={() => setEditMode(true)}>Edit Name</button>
           </>
         )}
