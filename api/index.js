@@ -6,10 +6,7 @@ import morgan from "morgan";
 import cors from "cors";
 import { auth } from "express-oauth2-jwt-bearer";
 
-const PORT = parseInt(process.env.PORT) || 8080;
-app.listen(PORT, () => {
- console.log(`Server running on http://localhost:${PORT} 🎉 🚀`);
-});
+
 
 
 // this is a middleware that will validate the access token sent by the client
@@ -536,6 +533,7 @@ app.post("/verify-user", requireAuth, async (req, res) => {
   }
 });
 
-app.listen(8000, () => {
-  console.log("Server running on http://localhost:8000 🎉 🚀");
+const PORT = parseInt(process.env.PORT) || 8080;
+app.listen(PORT, () => {
+ console.log(`Server running on http://localhost:${PORT} 🎉 🚀`);
 });
