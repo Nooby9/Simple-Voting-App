@@ -6,6 +6,12 @@ import morgan from "morgan";
 import cors from "cors";
 import { auth } from "express-oauth2-jwt-bearer";
 
+const PORT = parseInt(process.env.PORT) || 8080;
+app.listen(PORT, () => {
+ console.log(`Server running on http://localhost:${PORT} 🎉 🚀`);
+});
+
+
 // this is a middleware that will validate the access token sent by the client
 const requireAuth = auth({
   audience: process.env.AUTH0_AUDIENCE,
