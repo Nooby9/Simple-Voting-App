@@ -46,7 +46,7 @@ app.post("/candidates", requireAuth, async (req, res) => {
       const candidate = await prisma.candidate.create({
         data: {
           name,
-          type: { connect: { id: typeId } },
+          type: { connect: { id: parseInt(typeId) } },
         },
       });
       return res.status(201).json(candidate);
@@ -159,7 +159,7 @@ app.post("/votes", requireAuth, async (req, res) => {
 
     // Check if the candidate exists and fetch its type
     const candidate = await prisma.candidate.findUnique({
-      where: { id: candidateId },
+      where: { id: parseInt(candidateId) },
       include: {
         type: true 
       }
